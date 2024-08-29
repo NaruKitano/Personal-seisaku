@@ -10,24 +10,32 @@
         /* CSSスタイルをここに記述 */
         body {
             background-color: wheat;
+            text-align: center;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="html.css">
 </head>
-<h1>小説一覧</h1>
-<body style="text-align:center;">
-    <!--javascriptと紐づける-->
-    <script src="main.js"></script>
+
+<body>
+    <h1>小説一覧</h1>
     <form name="pullForm">
-<!--プルダウンメニューを設置して、各optionのvalueにリンク先を示す。-->
-    <select name="pullMenu"  >
-        <option value="dazai1.php">I can speak</option>
-        <option value="dazai2.php">青森</option>
-        <option value="dazai3.php">ア、秋</option>
-        <option value="dazai4.php">噓</option>
-    </select>
-    <input type="button" value="選択" onclick="screenChange()">
+        <!--プルダウンメニューを設置して、各optionのvalueにリンク先を示す。-->
+        <select name="pullMenu" id="pullMenu">
+            <option value="dazai.html">I can speak</option>
+            <option value="dazai.html">青森</option>
+            <option value="dazai.html">ア、秋</option>
+            <option value="dazai.html">噓</option>
+        </select>
+        <input type="button" value="選択" onclick="screenChange()">
     </form>
     <button onclick="location.href='seisaku.html'">タイトルへ戻る</button>
+
+    <script>
+        function screenChange() {
+            var selectElement = document.getElementById('pullMenu');
+            var selectedValue = selectElement.value;
+            location.href = selectedValue;
+        }
+    </script>
 </body>
+
 </html>
