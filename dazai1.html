@@ -18,15 +18,20 @@
 <body>
     <h1>I can speak</h1>
     <h4>太宰治</h4>
+    <!-- 速度調整ボタン -->
     <button id="speedUpButton">速くする</button>
     <button id="speedDownButton">遅くする</button>
     <button id="resetSpeedButton">元に戻す</button>
+    <!-- フォントサイズの調整ボタン -->
     <button id="increaseFontSizeButton">フォントサイズを大きく</button>
     <button id="decreaseFontSizeButton">フォントサイズを小さく</button>
     <br><br>
+    <!-- テキストの行を移動するボタン -->
     <button id="prevButton">前項</button>
     <button id="displayButton">次項</button>
+    <!-- テキストを表示する関数 -->
     <div id="output"></div>
+    <!-- 音声 -->
     <audio id="audioPlayer" controls>
         <source src="i1.mp3" type="audio/mp3">
     </audio>
@@ -96,38 +101,41 @@
             "i can/i28.mp3",
             "last.mp3"
         ];
-
-        var currentIndex = -1;
-        var isDisplaying = false;
+        // 状態を追跡する変数
+        var currentIndex = -1;// 最初のテキストのインデックス(最初を非表示にするため)
+        var isDisplaying = false;// テキストが表示中かどうか
         var displaySpeed = 150; // デフォルトの表示速度（ms単位）
         var interval; // setInterval のインスタンスを保持する変数
-        var fontSize = 16; // デフォルトのフォントサイズ
+        var fontSize = 20; // デフォルトのフォントサイズ
 
-        // 文字列を一文字ずつ表示する共通の関数
-        function displayStringOneByOne() {
-            var currentString = stringArray[currentIndex];
+                // 文字列を一文字ずつ表示する共通の関数
+                function displayStringOneByOne() {
+            var currentString = stringArray[currentIndex]; // 現在のテキストを取得
             var outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = ''; // 既存の文字列を削除
-            outputDiv.style.fontSize = fontSize + 'px'; // フォントサイズを設定
-
+            
+            var newDiv = document.createElement('div'); // 新しい行用のdivを作成
+            newDiv.style.fontSize = fontSize + 'px'; // フォントサイズを設定
+            newDiv.innerHTML = ''; // 既存の文字列を削除
+            
             var index = 0;
             clearInterval(interval); // 既存のインターバルをクリア
             interval = setInterval(function() {
                 isDisplaying = true; // 表示中のフラグをセット
-                var currentChar = currentString[index];
-                if (currentChar !== undefined) { // ここでundefinedをチェックして対処
-                    outputDiv.innerHTML += currentChar;
+                var currentChar = currentString[index]; // 一文字を取得
+                if (currentChar !== undefined) { // undefinedをチェック
+                    newDiv.innerHTML += currentChar; // 文字を追加
                     index++;
                 } else {
-                    clearInterval(interval); // 不要なインターバルをクリア
+                    clearInterval(interval); // インターバルをクリア
                     isDisplaying = false; // 表示中のフラグをリセット
                 }
-            }, displaySpeed); // 表示速度を変数から読み込む
-
+            }, displaySpeed); // 表示速度を設定
+            
+            outputDiv.appendChild(newDiv); // 新しい行を末尾に追加
             var audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.src = audioFiles[currentIndex];
-            audioPlayer.currentTime = 0;
-            audioPlayer.play();
+            audioPlayer.src = audioFiles[currentIndex];// 音声ファイルを設定
+            audioPlayer.currentTime = 0; // 再生位置をリセット
+            audioPlayer.play(); // 音声を再生
         }
 
         // 表示を継続する関数
@@ -144,7 +152,7 @@
                 }
             }
         }
-
+        // 次項のテキストを表示
         document.getElementById('displayButton').addEventListener('click', function() {
             if (isDisplaying) {
                 currentIndex++;
@@ -162,9 +170,9 @@
                 currentIndex = 0;
             }
 
-            displayStringOneByOne();
+            displayStringOneByOne();// テキストを表示
         });
-
+        // 前項のテキストを表示
         document.getElementById('prevButton').addEventListener('click', function() {
             if (isDisplaying) {
                 currentIndex--;
@@ -190,18 +198,18 @@
             var audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.playbackRate = speed;
         }
-
+        // 表示速度を速くする
         document.getElementById('speedUpButton').addEventListener('click', function() {
             displaySpeed -= 10; // 速くする
             if (displaySpeed < 10) {
                 displaySpeed = 10; // 最速設定
             }
             if (isDisplaying) {
-                displayStringOneByOne(); // 速度変更後、再度表示を開始
+                //displayStringOneByOne();  速度変更後、再度表示を開始
                 changePlaybackSpeed(1.0 / (displaySpeed / 100)); // 音声再生速度
             }
         });
-
+        // 表示速度を遅くする
         document.getElementById('speedDownButton').addEventListener('click', function() {
             displaySpeed += 10; // 遅くする
             if (displaySpeed > 1000) {
@@ -212,7 +220,7 @@
                 changePlaybackSpeed(1.0 / (displaySpeed / 100)); // 音声再生速度を変更
             }
         });
-
+        // 表示速度を元に戻す
         document.getElementById('resetSpeedButton').addEventListener('click', function() {
             displaySpeed = 150; // デフォルトの表示速度に戻す
             if (isDisplaying) {
