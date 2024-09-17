@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<body>
+<div id="text"></div>
+
+<script type="text/javascript">
+    // 元の文字列（改行を含む）
+    var textOrigin = "吾輩は猫である。<br>名前はまだ無い。<br>...";
+    // textOriginを分割した文字を入れる配列
+    var chars = [];
+    // charsに格納されているこの数値の文字を表示する
+    var charNum = 0;
+    // textAreaをグローバルに宣言
+    var textArea;
+
+    // DOM要素のロード時に実行
+    window.addEventListener("DOMContentLoaded", function() {
+        textArea = document.querySelector("#text");
+        splitText();  // splitTextをここで一度だけ呼び出す
+    }, false);
+
+    var splitText = function() {
+        // 改行タグを含めて分割
+        var segments = textOrigin.split(/(<br>)/);
+        segments.forEach(function(segment) {
+            // <br>タグはそのまま追加し、それ以外は一文字ずつ分割して追加
+            if (segment === "<br>") {
+                chars.push(segment);
+            } else {
+                segment.split("").forEach(function(char) {
+                    chars.push(char);
+                });
+            }
+        });
+        printText();  // 分割後に文字を表示する
+    }
+
+    var printText = function() {
+        // timerでこのfunctionを呼び出している
+        var timer = setTimeout(printText, 150);
+
+        // chars[charNum]の中身がundefinedでない場合、DOM要素に書き出す
+        if (charNum < chars.length) {
+            if (chars[charNum] === "<br>") {
+                textArea.innerHTML += "<br>";
+            } else {
+                textArea.innerHTML += chars[charNum];
+            }
+            charNum++;
+        } else {
+            // undefinedの場合、timerによる呼び出し処理を終了する
+            clearTimeout(timer);
+        }
+    }
+
+    var printAllText = function() {
+        // 全体を表示
+        clearTimeout(timer);
+        textArea.innerHTML = textOrigin;
+    }
+
+    // 一度だけイベントリスナーを追加する
+    textArea.addEventListener("click", printAllText, false);
+
+</script>
+</body>
+</html>

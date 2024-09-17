@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>プレビュー</title>
+    <link rel="stylesheet" href="html.css">
+</head>
+<body>
+    <h1 id="title"></h1> <!-- タイトルを表示するための要素 -->
+    <div id="text"></div>
+
+    <!-- ボタンを横一列に配置 -->
+    <div class="button-row">
+        <button id="speedUpButton" class="btn btn-color-4">速くする</button>
+        <button id="speedDownButton" class="btn btn-color-4">遅くする</button>
+        <button id="resetSpeedButton" class="btn bg-color-4">元に戻す</button>
+        <button id="increaseFontSizeButton" class="btn bg-color-4">フォント＋</button>
+        <button id="decreaseFontSizeButton" class="btn btn-color-4">フォントー</button>
+    </div>
+
+    <!-- 次項と前項のボタンをテキストの下に配置 -->
+    <div class="button-row">
+        <button id="prevButton" class="btn btn-color-4">前項</button>
+        <button id="displayButton" class="btn bg-color-4">次項</button>
+    </div>
+
+    <script type="text/javascript">
+        var paragraphs = JSON.parse(localStorage.getItem("textOrigin")) || ["テキストが入力されていません。"];
+        var title = localStorage.getItem("titleOrigin") || "タイトルが入力されていません。"; // タイトルを取得
+        var currentParagraph = 0;
+        var chars = [];
+        var charNum = 0;
+        var textArea = document.querySelector("#text"); // ここでtextAreaを設定
+        var displaySpeed = 100;
+        var fontSize = 20;
+        var timer;
+
+        // タイトルを表示
+        document.getElementById("title").innerText = title;
+
+        window.addEventListener("DOMContentLoaded", function() {
+            textArea.style.fontSize = fontSize + 'px';
+            splitText();
+        }, false);
+
+        function splitText() {
+            clearTimeout(timer);
+            chars = paragraphs[currentParagraph].split("");
+            charNum = 0;
+            textArea.innerHTML = '';
+            printText();
+        }
+
+        function printText() {
+            if (charNum < chars.length) {
+                textArea.innerHTML += chars[charNum];
+                charNum++;
+                timer = setTimeout(printText, displaySpeed);
+            }
+        }
+
+        function printAllText() {
+            clearTimeout(timer);
+            textArea.innerHTML = paragraphs[currentParagraph];
+        }
+
+        textArea.addEventListener("click", printAllText, false);
+
+        // ボタン操作のイベントリスナー
+        document.addEventListener("keydown", function(event) {
+            switch (event.key) {
+                case "ArrowUp":
+                    document.getElementById("speedUpButton").click();
+                    break;
+                case "ArrowDown":
+                    document.getElementById("speedDownButton").click();
+                    break;
+                case "ArrowLeft":
+                    document.getElementById("prevButton").click();
+                    break;
+                case "ArrowRight":
+                    document.getElementById("displayButton").click();
+                    break;
+                case "Enter":
+                    document.getElementById("resetSpeedButton").click();
+                    break;
+                case "p":
+                    document.getElementById("increaseFontSizeButton").click();
+                    break;
+                case "-":
+                    document.getElementById("decreaseFontSizeButton").click();
+                    break;
+            }
+        });
+
+        document.getElementById('speedUpButton').addEventListener('click', function() {
+            displaySpeed = Math.max(10, displaySpeed - 10);
+            restartText();
+        });
+
+        document.getElementById('speedDownButton').addEventListener('click', function() {
+            displaySpeed = Math.min(1000, displaySpeed + 10);
+            restartText();
+        });
+
+        document.getElementById('resetSpeedButton').addEventListener('click', function() {
+            displaySpeed = 150;
+            restartText();
+        });
+
+        document.getElementById('increaseFontSizeButton').addEventListener('click', function() {
+            fontSize += 2;
+            textArea.style.fontSize = fontSize + 'px';
+        });
+
+        document.getElementById('decreaseFontSizeButton').addEventListener('click', function() {
+            fontSize = Math.max(8, fontSize - 2);
+            textArea.style.fontSize = fontSize + 'px';
+        });
+
+        document.getElementById('prevButton').addEventListener('click', function() {
+            if (currentParagraph > 0) {
+                currentParagraph--;
+                splitText();
+            }
+        });
+
+        document.getElementById('displayButton').addEventListener('click', function() {
+            if (currentParagraph < paragraphs.length - 1) {
+                currentParagraph++;
+            } else {
+                currentParagraph = 0; // 最後の段落の場合、最初の段落に戻る
+            }
+            splitText();
+        });
+
+        function restartText() {
+            clearTimeout(timer);
+            charNum = 0;
+            textArea.innerHTML = '';
+            printText();
+        }
+    </script>
+</body>
+</html>

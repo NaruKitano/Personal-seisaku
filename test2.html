@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>テキスト入力ページ</title>
+    <link rel="stylesheet" href="html.css">
+</head>
+<body>
+    <h1>テキストを入力してください</h1>
+    <input type="text" id="titleInput" placeholder="タイトルを入力" />
+    <br><br>
+    <textarea id="textInput" rows="10" cols="100" placeholder="ここにテキストを入力"></textarea>
+    <br>
+    <button id="submitButton" class="btn btn-color-4">送信</button>
+    <br><br>
+    <!-- 背景色変更ボタン-->
+    <button id="bgColorButton" class="btn btn-color-4">▶</button>
+
+    <script type="text/javascript">
+        document.getElementById("submitButton").addEventListener("click", function() {
+            var titleText = document.getElementById("titleInput").value; // タイトルを取得
+            var inputText = document.getElementById("textInput").value;
+            // 改行で分割
+            var paragraphs = inputText.split("\n");
+            // 空の段落を削除
+            paragraphs = paragraphs.filter(function(paragraph) {
+                return paragraph.trim() !== "";
+            });
+            // テキストをJSONとしてlocalStorageに保存
+            localStorage.setItem("textOrigin", JSON.stringify(paragraphs));
+            localStorage.setItem("titleOrigin", titleText); // タイトルをlocalStorageに保存
+            
+            // 少し遅延させてからリダイレクト
+            setTimeout(function() {
+                window.location.href = "display.html";  // display.html にリダイレクト
+            }, 100);  // 100ms 遅延
+        });
+
+        // 背景色変更ボタンのイベントリスナーを追加
+        const bgColors = ["bg-color-1", "bg-color-2", "bg-color-3", "bg-color-4","bg-color-5"];
+        const btnColors = ["btn-color-1", "btn-color-2", "btn-color-3", "btn-color-4","bg-color-5"];
+        let currentColorIndex = 0;
+
+        document.getElementById("bgColorButton").addEventListener("click", function() {
+            document.body.className = bgColors[currentColorIndex];
+
+            // すべての.btnクラスを持つボタンのクラスを変更
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.className = "btn " + btnColors[currentColorIndex];
+            });
+
+            currentColorIndex = (currentColorIndex + 1) % bgColors.length; // インデックスを循環させる
+        });
+    </script>
+</body>
+</html>
